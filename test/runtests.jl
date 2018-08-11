@@ -25,22 +25,4 @@ testdata = TestData(:parent, 1, [1,2,3], TestData(:child, 2, [4,5,6], [7 8; 9 10
 @test typeof(plotchecks(testdata)) == Array{Widgets.Widget{:checkbox},1}
 @test length(plotchecks(testdata)) == 3
 
-using Plots
-
-struct TestData{T}
-    n::Symbol
-    x::Int
-    a::Vector
-    t::T
-end
-
-testdata = TestData(:child, 2, [4,5,6], [7 8; 9 10])
-
-plotnames(testdata)
-plotdata(testdata)
-plotchecks(testdata)
-
-plot_selected(testdata, true, false, true)
-plot_all(testdata)
-
-autoplot(testdata)
+# autoplot(testdata)

@@ -17,8 +17,10 @@ plotnames(x) = getfield.(plottables(x), 1)
 plotdata(x) = getfield.(plottables(x), 2)
 plotchecks(x) = [checkbox(false, label=name) for name in plotnames(x)]
 
-plot_selected(x, checklist...) = 
-    [plot(data) for (i, (name, data)) in enumerate(plottables(x)) if checklist[i]] 
+plot_selected(x, checklist...) = begin
+    ps = plotdata(x)
+    [plot(ps[i]) for (i, check) in enumerate(checklist) if check] 
+end
 plot_all(x) = [plot(data) for (i, (name, data)) in enumerate(plottables(x))] 
 
 autoplot(x) = plot(plot_all(x)...)
