@@ -6,34 +6,42 @@ using Nested, Requires, Observables, InteractBase, Plots
 
 export @plottable, plottable, plottables, plotnames, plotdata, plotchecks, plot_selected, plot_all, autoplot
 
-# Flattening
 
+
+##### Flattening
 plottables_expr(T, path, index) = :(plottables(getfield($path, $(QuoteNode(index))), P, $(QuoteNode(index))))
 plottables_inner(T) = nested(T, :t, plottables_expr)
  
-plottables(x) = plottables(x, Void, :unnamed)
+plottables(x) = plottables(x, Nothing, :unnamed)
 plottables(x::AbstractArray, P, fname) = (fname => x,)
-@require DataFrames begin
-    plottables(x::DataFrames.DataFrame, P, fname) = (fname => x,)
-end
-@require TypedTables begin
-    plottables(x::TypedTables.Table, P, fname) = (fname => x,)
-end
 @generated plottables(t, P, fname) = plottables_inner(t)
 
 
-# Plot generation 
 
+##### Plot generation 
 plotnames(x) = getfield.(plottables(x), 1)
-plotdata(x, range) = [d[range.start:min(range.stop, length(d))] for d in getfield.(plottables(x), 2)]
+
+plotdata(x) = getfield.(plottables(x), 2)
+plotdata(x, range) = [d[range.start:min(range.stop, length(d))] for d in plotdata(x)]
+
 plotchecks(x) = [checkbox(false, label=name) for name in plotnames(x)]
 
-plot_selected(x, checklist, range) = begin
-    d = plotdata(x, range)
+plot_selected(x, checklist, args...) = begin
+    d = plotdata(x, args...)
     [plot(d[i]) for (i, check) in enumerate(checklist) if check] 
 end
 plot_all(x) = [plot(data) for (i, (name, data)) in enumerate(plottables(x))] 
 
 autoplot(x) = plot(plot_all(x)...)
+
+
+function __init__()
+    @require DataFrames="a93c6f00-e57d-5684-b7b6-d8193f3e46c0" begin
+        plottables(x::DataFrames.DataFrame, P, fname) = (fname => x,)
+    end
+    @require TypedTables="9d95f2ec-7b3d-5a63-8d20-e2491e220bb9" begin
+        plottables(x::TypedTables.Table, P, fname) = (fname => x,)
+    end
+end
 
 end # module
