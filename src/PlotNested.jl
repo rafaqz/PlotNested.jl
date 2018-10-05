@@ -1,20 +1,25 @@
-__precompile__()
-
 module PlotNested
 
-using Nested, Requires, Observables, InteractBase, Plots 
+using Requires, 
+      Observables, 
+      Interact, 
+      Plots 
 
 export @plottable, plottable, plottables, plotnames, plotdata, plotchecks, plot_selected, plot_all, autoplot
 
+nested(T::Type, P::Type, expr_builder) = 
+    expr_combiner(T, [Expr(:..., expr_builder(T, fn)) for fn in fieldnames(T)])
+
+expr_combiner(T, expressions) = Expr(:tuple, expressions...)
 
 
 ##### Flattening
-plottables_expr(T, path, index) = :(plottables(getfield($path, $(QuoteNode(index))), P, $(QuoteNode(index))))
-plottables_inner(T) = nested(T, :t, plottables_expr)
+plottables_expr(T, index) = :(plottables(getfield(t, $(QuoteNode(index))), P, $(QuoteNode(index))))
+plottables_inner(T, P) = nested(T, P, plottables_expr)
  
 plottables(x) = plottables(x, Nothing, :unnamed)
 plottables(x::AbstractArray, P, fname) = (fname => x,)
-@generated plottables(t, P, fname) = plottables_inner(t)
+@generated plottables(t, P, fname) = plottables_inner(t, P)
 
 
 
