@@ -1,8 +1,8 @@
 module PlotNested
 
 using Requires, 
-      Observables, 
       Interact, 
+      Observables, 
       Plots 
 
 export @plottable, plottable, plottables, plotnames, plotdata, plotchecks, plot_selected, plot_all, autoplot
