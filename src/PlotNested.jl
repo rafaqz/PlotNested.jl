@@ -49,7 +49,11 @@ plottables(x::Tuple{}, fname) where N = ()
 plotnames(x) = getfield.(plottables(x), 1)
 
 plotdata(x) = getfield.(plottables(x), 2)
-plotdata(x, range) = [d[range.start:min(range.stop, length(d))] for d in plotdata(x)]
+plotdata(x, range) = [getrange(d, range) for d in plotdata(x)]
+plotdata(x, range) = [getrange(d, range) for d in plotdata(x)]
+getrange(d::AbstractVector, range) = d[range.start:min(range.stop, length(d))]
+getrange(d::AbstractMatrix, range) = d[range.start:min(range.stop, length(d)), :]
+getrange(d::AbstractArray{T,3}, range) where T = d[:, :, range.start:min(range.stop, length(d))]
 
 plotchecks(x) = [checkbox(false, label=name) for name in plotnames(x)]
 
