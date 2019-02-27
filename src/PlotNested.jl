@@ -55,7 +55,7 @@ getrange(d::AbstractVector, range) = d[range.start:min(range.stop, length(d))]
 getrange(d::AbstractMatrix, range) = d[range.start:min(range.stop, length(d)), :]
 getrange(d::AbstractArray{T,3}, range) where T = d[:, :, range.start:min(range.stop, length(d))]
 
-plotchecks(x) = [checkbox(false, label=name) for name in plotnames(x)]
+plotchecks(x) = [checkbox(false, label=string(name)) for name in plotnames(x)]
 
 plot_selected(x, checklist, args...) = begin
     d = plotdata(x, args...)
