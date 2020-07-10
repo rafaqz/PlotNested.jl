@@ -3,7 +3,6 @@ module PlotNested
 using Requires,
       FieldMetadata,
       Interact,
-      Observables,
       Plots
 
 import FieldMetadata: @plottable, @replottable, plottable
@@ -51,15 +50,18 @@ plotnames(x) = getfield.(plottables(x), 1)
 plotdata(x) = getfield.(plottables(x), 2)
 plotdata(x, range) = [getrange(d, range) for d in plotdata(x)]
 plotdata(x, range) = [getrange(d, range) for d in plotdata(x)]
-getrange(d::AbstractVector, range) = d[range.start:min(range.stop, length(d))]
-getrange(d::AbstractMatrix, range) = d[range.start:min(range.stop, length(d)), :]
-getrange(d::AbstractArray{T,3}, range) where T = d[:, :, range.start:min(range.stop, length(d))]
+getrange(d::AbstractVector, range) = begin
+    d[first(range):min(last(range), length(d))]
+end
+getrange(d::AbstractMatrix, range) = d[first(range):min(last(range), length(d)), :]
+getrange(d::AbstractArray{T,3}, range) where T = d[:, :, first(range):min(last(range), length(d))]
 
 plotchecks(x) = [checkbox(false, label=string(name)) for name in plotnames(x)]
 
 plot_selected(x, checklist, args...) = begin
+    labels = plotnames(x)
     d = plotdata(x, args...)
-    [plot(d[i]) for (i, check) in enumerate(checklist) if check] 
+    [plot(d[i], label=labels[i]) for (i, check) in enumerate(checklist) if check] 
 end
 plot_all(x) = [plot(data) for (i, (name, data)) in enumerate(plottables(x))] 
 
