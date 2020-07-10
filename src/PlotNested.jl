@@ -59,7 +59,7 @@ getrange(d::AbstractArray{T,3}, range) where T = d[:, :, first(range):min(last(r
 plotchecks(x) = [checkbox(false, label=string(name)) for name in plotnames(x)]
 
 plot_selected(x, checklist, args...) = begin
-    labels = plotnames(x)
+    labels = map(string, plotnames(x))
     d = plotdata(x, args...)
     [plot(d[i], label=labels[i]) for (i, check) in enumerate(checklist) if check] 
 end
