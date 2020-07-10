@@ -5,7 +5,7 @@ using Requires,
       Interact,
       Plots
 
-import FieldMetadata: @plottable, @replottable, plottable
+import FieldMetadata: @plottable, plottable
 
 export @plottable, plottable, plottables, plotnames, plotdata, plotchecks, plot_selected, plot_all, autoplot
 
