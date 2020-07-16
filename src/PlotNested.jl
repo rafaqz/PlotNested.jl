@@ -49,7 +49,6 @@ plotnames(x) = getfield.(plottables(x), 1)
 
 plotdata(x) = getfield.(plottables(x), 2)
 plotdata(x, range) = [getrange(d, range) for d in plotdata(x)]
-plotdata(x, range) = [getrange(d, range) for d in plotdata(x)]
 getrange(d::AbstractVector, range) = begin
     d[first(range):min(last(range), length(d))]
 end
